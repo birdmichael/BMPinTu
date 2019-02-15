@@ -53,6 +53,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 @property (nonatomic, assign) CGFloat firstX;
 @property (nonatomic, assign) CGFloat firstY;
 
+@property (nonatomic, assign) UIImageView *conte
+
 @end
 
 @implementation ViewController
@@ -68,7 +70,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 #pragma mark ——— 私有方法
 /** 设置初始化数据 */
 - (void)initializeDataSet {
-    self.originalCatImage = [UIImage imageNamed:@"QYttC"];
+    self.originalCatImage = [self imageResize:[UIImage imageNamed:@"123"] andResizeTo:CGSizeMake(300, 300)];
     // 切片数量
     self.pieceHCount = 3;
     self.pieceVCount = 3;
@@ -182,8 +184,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     float mTotalWidth = 0; // 总宽
     
     // 2. 根据类型数据制作贝塞尔曲线
-    for(int i = 0; i < [self.pieceTypeArray count]; i++)
-    {
+    for(int i = 0; i < [self.pieceTypeArray count]; i++) {
         // 2.1 根绝检测左边和下边是否凹决定起点
         mXSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?-self.deepnessV:0;
         mYSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] integerValue] == PieceTypeOutside)?-self.deepnessH:0;
@@ -259,40 +260,28 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     float mXAddableVal = 0;
     float mYAddableVal = 0;
     
-    for(int i = 0; i < [self.pieceBezierPathsArray count]; i++)
-    {
+    for(int i = 0; i < [self.pieceBezierPathsArray count]; i++) {
         CGRect mCropFrame = [[[self.pieceCoordinateRectArray objectAtIndex:i] objectAtIndex:0] CGRectValue];
         
         CGRect mImageFrame = [[[self.pieceCoordinateRectArray objectAtIndex:i] objectAtIndex:1] CGRectValue];
         
-        //--- puzzle peace image.
+        // 切割图片.
         UIImageView *mPeace = [UIImageView new];
-        
         [mPeace setFrame:mImageFrame];
-        
         [mPeace setTag:i+100];
-        
         [mPeace setUserInteractionEnabled:YES];
-        
         [mPeace setContentMode:UIViewContentModeTopLeft];
-        //===
-        
-        
-        //--- addable value
+
+        // 修正
         mXAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?self.deepnessV:0;
-        
         mYAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] integerValue] == PieceTypeOutside)?self.deepnessH:0;
-        
         mCropFrame.origin.x += mXAddableVal;
-        
         mCropFrame.origin.y += mYAddableVal;
-        //===
         
-        
-        //--- crop and clip and add to self view
+        // 添加图片
         [mPeace setImage:[self cropImage:self.originalCatImage withRect:mCropFrame]];
         [self setClippingPath:[self.pieceBezierPathsArray objectAtIndex:i]:mPeace];
-        [[self view] addSubview:mPeace];
+        [self.view addSubview:mPeace];
         [mPeace setTransform:CGAffineTransformMakeRotation([[self.pieceRotationArray objectAtIndex:i] floatValue])];
         
         
@@ -318,13 +307,46 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     if (![[imgView layer] mask]){
         [[imgView layer] setMask:[CAShapeLayer layer]];
     }
-    
     [(CAShapeLayer*) [[imgView layer] mask] setPath:[clippingPath CGPath]];
 }
 
 
 - (UIImage *)cropImage:(UIImage*)originalImage withRect:(CGRect)rect {
     return [UIImage imageWithCGImage:CGImageCreateWithImageInRect([originalImage CGImage], rect)];
+}
+
+
+// 修挣图片尺寸
+- (UIImage *)imageResize :(UIImage*)img andResizeTo:(CGSize)asize {
+    UIImage *newimage;
+    if (nil == img) {
+        newimage = nil;
+    } else{
+        CGSize oldsize = img.size;
+        CGRect rect;
+        if (asize.width/asize.height > oldsize.width/oldsize.height) {
+            rect.size.width = asize.height*oldsize.width/oldsize.height;
+            rect.size.height = asize.height;
+            rect.origin.x = (asize.width - rect.size.width)/2;
+            rect.origin.y = 0;
+            
+        } else{
+            rect.size.width = asize.width;
+            rect.size.height = asize.width*oldsize.height/oldsize.width;
+            rect.origin.x = 0;
+            rect.origin.y = (asize.height - rect.size.height)/2;
+        }
+        UIGraphicsBeginImageContext(asize);
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        CGContextSetFillColorWithColor(context, [[UIColor clearColor] CGColor]);
+        UIRectFill(CGRectMake(0, 0, asize.width, asize.height));//clear background
+
+        [img drawInRect:rect];
+        newimage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+    }
+    
+    return newimage;
 }
 
 
