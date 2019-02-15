@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 /** 设置页面视图 */
 - (void)setupOthersView {
     UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
-    logo.top = 70;
+    logo.top = 44;
     logo.size = CGSizeMake(80, 80);
     logo.centerX = self.view.centerX;
     [self.view addSubview:logo];
@@ -85,8 +85,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     title.text = @"BMPinTu";
     title.font = [UIFont boldSystemFontOfSize:22];
     title.textColor = [UIColor blackColor];
-    title.top = logo.bottom + 10;
-    title.size = CGSizeMake(200, 30);
+    title.top = logo.bottom ;
+    title.size = CGSizeMake(200, 20);
     title.textAlignment = NSTextAlignmentCenter;
     title.centerX = logo.centerX;
     
@@ -117,7 +117,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 - (void)initializeDataSet {
     //创建提示图像，（位置以及尺寸决定拼图位置以及尺寸）
     self.tipsImgaeView = [UIImageView new];
-    self.tipsImgaeView.size = CGSizeMake(300, 300);
+    self.tipsImgaeView.size = CGSizeMake([[UIScreen mainScreen] bounds].size.width - 3, [[UIScreen mainScreen] bounds].size.width -3);
     self.tipsImgaeView.centerX = self.view.centerX;
     self.tipsImgaeView.centerY = self.view.centerY;
     [self.view addSubview:self.tipsImgaeView];

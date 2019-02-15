@@ -13,7 +13,6 @@
 		01F1811E221510A900585C3E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 01F1811D221510A900585C3E /* Assets.xcassets */; };
 		01F18121221510A900585C3E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01F1811F221510A900585C3E /* LaunchScreen.storyboard */; };
 		01F18124221510A900585C3E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F18123221510A900585C3E /* main.m */; };
-		01F1812B221570FF00585C3E /* QYttC.png in Resources */ = {isa = PBXBuildFile; fileRef = 01F1812A221570FF00585C3E /* QYttC.png */; };
 		01F1812E2216614B00585C3E /* UIView+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F1812D2216614B00585C3E /* UIView+Additions.m */; };
 /* End PBXBuildFile section */
 
@@ -28,7 +27,6 @@
 		01F18120221510A900585C3E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		01F18122221510A900585C3E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01F18123221510A900585C3E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		01F1812A221570FF00585C3E /* QYttC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QYttC.png; sourceTree = "<group>"; };
 		01F1812C2216614B00585C3E /* UIView+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Additions.h"; sourceTree = "<group>"; };
 		01F1812D2216614B00585C3E /* UIView+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Additions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -65,7 +63,6 @@
 			children = (
 				01F1812C2216614B00585C3E /* UIView+Additions.h */,
 				01F1812D2216614B00585C3E /* UIView+Additions.m */,
-				01F1812A221570FF00585C3E /* QYttC.png */,
 				01F18114221510A800585C3E /* AppDelegate.h */,
 				01F18115221510A800585C3E /* AppDelegate.m */,
 				01F18117221510A800585C3E /* ViewController.h */,
@@ -137,7 +134,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				01F18121221510A900585C3E /* LaunchScreen.storyboard in Resources */,
-				01F1812B221570FF00585C3E /* QYttC.png in Resources */,
 				01F1811E221510A900585C3E /* Assets.xcassets in Resources */,
 				01F1811C221510A800585C3E /* Main.storyboard in Resources */,
 			);
