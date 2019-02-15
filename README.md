@@ -1,4 +1,4 @@
-# [![logo](https://github.com/birdmichael/BMPinTu/blob/master/logo.jpg)](https://github.com/birdmichael/BMPinTu/blob/master/logo.jpg)BMPinTu
+# <img src="https://github.com/birdmichael/BMPinTu/blob/master/logo.jpg" width="50">BMPinTu
 一个拼图demo，多边形拼图~
 
 # 截图演示
