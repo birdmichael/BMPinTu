@@ -7,8 +7,9 @@
 //
 
 #import "ViewController.h"
+#import "UIView+Additions.h"
 
-#define verificationTolerance  8.0
+static const CGFloat kVerificationTolerance = 8.0; // 验证容错值
 
 typedef NS_ENUM(NSInteger, PieceType) {
     PieceTypeInside = -1,  // 凸
@@ -44,6 +45,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 @property (nonatomic, strong) NSMutableArray<NSDictionary *> *pieceTypeArray;
 /** 切片坐标 */
 @property (nonatomic, strong) NSMutableArray *pieceCoordinateRectArray;
+/** 切片坐标 */
+//@property (nonatomic, strong) NSMutableArray *pieceCoordinateBoundsArray;
 /** 切片方向 */
 @property (nonatomic, strong) NSMutableArray *pieceRotationArray;
 
@@ -53,7 +56,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 @property (nonatomic, assign) CGFloat firstX;
 @property (nonatomic, assign) CGFloat firstY;
 
-@property (nonatomic, assign) UIImageView *conte
+@property (nonatomic, strong) UIImageView *tipsImgaeView;
 
 @end
 
@@ -65,12 +68,65 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     [self setupPieceTypePieceCoordinateAndRotationValuesArrays];
     [self setUpPieceBezierPaths];
     [self setUpPuzzlePieceImages];
+    [self setupOthersView];
 }
 
 #pragma mark ——— 私有方法
+/** 设置页面视图 */
+- (void)setupOthersView {
+    UIImageView *logo = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    logo.top = 70;
+    logo.size = CGSizeMake(80, 80);
+    logo.centerX = self.view.centerX;
+    [self.view addSubview:logo];
+    
+    UILabel *title = [UILabel new];
+    [self.view addSubview:title];
+    title.text = @"BMPinTu";
+    title.font = [UIFont boldSystemFontOfSize:22];
+    title.textColor = [UIColor blackColor];
+    title.top = logo.bottom + 10;
+    title.size = CGSizeMake(200, 30);
+    title.textAlignment = NSTextAlignmentCenter;
+    title.centerX = logo.centerX;
+    
+    UIButton *tipBtn = [UIButton new];
+    [tipBtn setTitle:@"求救BM" forState:UIControlStateNormal];
+    [tipBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.view addSubview:tipBtn];
+    [tipBtn setBackgroundColor:[UIColor blackColor]];
+    tipBtn.size = CGSizeMake(120, 40);
+    tipBtn.centerX = logo.centerX;
+    tipBtn.top = self.tipsImgaeView.bottom + 80;
+    tipBtn.layer.cornerRadius = 5;
+    [tipBtn addTarget:self action:@selector(showTip) forControlEvents:UIControlEventTouchDown];
+    [tipBtn addTarget:self action:@selector(hideTip) forControlEvents:UIControlEventTouchUpInside|UIControlEventTouchUpOutside];
+    
+}
+
+- (void)showTip {
+    self.tipsImgaeView.image = [UIImage imageNamed:@"123"];
+    self.tipsImgaeView.alpha = 0.5;
+}
+- (void)hideTip {
+    self.tipsImgaeView.image = nil;
+    self.tipsImgaeView.alpha = 1;
+}
+
 /** 设置初始化数据 */
 - (void)initializeDataSet {
-    self.originalCatImage = [self imageResize:[UIImage imageNamed:@"123"] andResizeTo:CGSizeMake(300, 300)];
+    //创建提示图像，（位置以及尺寸决定拼图位置以及尺寸）
+    self.tipsImgaeView = [UIImageView new];
+    self.tipsImgaeView.size = CGSizeMake(300, 300);
+    self.tipsImgaeView.centerX = self.view.centerX;
+    self.tipsImgaeView.centerY = self.view.centerY;
+    [self.view addSubview:self.tipsImgaeView];
+//    self.tipsImgaeView.image = [UIImage imageNamed:@"123"];
+    self.tipsImgaeView.layer.borderColor = [UIColor blackColor].CGColor;
+    self.tipsImgaeView.layer.borderWidth = 1;
+    
+    
+    self.originalCatImage = [self imageResize:[UIImage imageNamed:@"123"] andResizeTo:self.tipsImgaeView.frame.size];
     // 切片数量
     self.pieceHCount = 3;
     self.pieceVCount = 3;
@@ -84,8 +140,10 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     // 初始化组数容器
     self.pieceTypeArray = [@[] mutableCopy];
     self.pieceCoordinateRectArray = [@[] mutableCopy];
+//    self.pieceCoordinateBoundsArray = [@[] mutableCopy];
     self.pieceRotationArray = [@[] mutableCopy];
     self.pieceBezierPathsArray = [@[] mutableCopy];
+    
 }
 
 /** 设置Piece切片的类型，坐标，以及方向 */
@@ -159,10 +217,14 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
             
             [self.pieceTypeArray addObject:mOnePieceDic];
             
-            // 4. 组装裁剪和图像用的 frame
+            // 4. 组装裁剪和图像用的 frame 和 bouns
+            CGFloat mStartPointX = self.tipsImgaeView.left;
+            CGFloat mStartPointY = self.tipsImgaeView.top;
             [self.pieceCoordinateRectArray addObject:[NSArray arrayWithObjects:
-                                                  [NSValue valueWithCGRect:CGRectMake(j*self.cubeWidthValue,i*self.cubeHeightValue,mCubeWidth,mCubeHeight)],
-                                                  [NSValue valueWithCGRect:CGRectMake(j*self.cubeWidthValue-(mSideL == PieceTypeOutside?-self.deepnessV:0),i*self.cubeHeightValue-(mSideB == PieceTypeOutside?-self.deepnessH:0), mCubeWidth, mCubeHeight)], nil]];
+                                                  [NSValue valueWithCGRect:CGRectMake(j*self.cubeWidthValue,  i*self.cubeHeightValue,mCubeWidth,mCubeHeight)],
+                                                  [NSValue valueWithCGRect:CGRectMake(mStartPointX +j*self.cubeWidthValue-(mSideL == PieceTypeOutside?-self.deepnessV:0),mStartPointY + i*self.cubeHeightValue-(mSideB == PieceTypeOutside?-self.deepnessH:0), mCubeWidth, mCubeHeight)], nil]];
+            
+            
             
             [self.pieceRotationArray addObject:[NSNumber numberWithFloat:0]];
             mCounter++;
@@ -365,8 +427,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     if (sender.state == UIGestureRecognizerStateEnded) {
         CGRect mImageFrame = [[[self.pieceCoordinateRectArray objectAtIndex:mImgView.tag-100] objectAtIndex:1] CGRectValue];
         CGPoint mimagePoint = CGPointMake(mImageFrame.origin.x +mImageFrame.size.width/2, mImageFrame.origin.y + mImageFrame.size.height/2);
-        if ( fabs(mimagePoint.x - mImgView.center.x) <= verificationTolerance &&
-            fabs(mimagePoint.y - mImgView.center.y) <= verificationTolerance) {
+        if ( fabs(mimagePoint.x - mImgView.center.x) <= kVerificationTolerance &&
+            fabs(mimagePoint.y - mImgView.center.y) <= kVerificationTolerance) {
             NSLog(@"位置匹配，可以修正");
             [mImgView setCenter:mimagePoint];;
         }else{

@@ -14,6 +14,7 @@
 		01F18121221510A900585C3E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01F1811F221510A900585C3E /* LaunchScreen.storyboard */; };
 		01F18124221510A900585C3E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F18123221510A900585C3E /* main.m */; };
 		01F1812B221570FF00585C3E /* QYttC.png in Resources */ = {isa = PBXBuildFile; fileRef = 01F1812A221570FF00585C3E /* QYttC.png */; };
+		01F1812E2216614B00585C3E /* UIView+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 01F1812D2216614B00585C3E /* UIView+Additions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,8 @@
 		01F18122221510A900585C3E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01F18123221510A900585C3E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		01F1812A221570FF00585C3E /* QYttC.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QYttC.png; sourceTree = "<group>"; };
+		01F1812C2216614B00585C3E /* UIView+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Additions.h"; sourceTree = "<group>"; };
+		01F1812D2216614B00585C3E /* UIView+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Additions.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +63,8 @@
 		01F18113221510A800585C3E /* BMPintu */ = {
 			isa = PBXGroup;
 			children = (
+				01F1812C2216614B00585C3E /* UIView+Additions.h */,
+				01F1812D2216614B00585C3E /* UIView+Additions.m */,
 				01F1812A221570FF00585C3E /* QYttC.png */,
 				01F18114221510A800585C3E /* AppDelegate.h */,
 				01F18115221510A800585C3E /* AppDelegate.m */,
@@ -145,6 +150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01F1812E2216614B00585C3E /* UIView+Additions.m in Sources */,
 				01F18119221510A800585C3E /* ViewController.m in Sources */,
 				01F18124221510A900585C3E /* main.m in Sources */,
 				01F18116221510A800585C3E /* AppDelegate.m in Sources */,
