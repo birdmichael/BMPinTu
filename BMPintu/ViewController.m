@@ -149,7 +149,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
 /** 设置Piece切片的类型，坐标，以及方向 */
 - (void)setupPieceTypePieceCoordinateAndRotationValuesArrays {
     
-    NSUInteger mCounter = 0; // 调用计数器
+    NSUInteger mCounter = 0; // 调用次数计数器
     
     PieceType mSideL = PieceTypeEmpty;
     PieceType mSideT = PieceTypeEmpty;
@@ -435,6 +435,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
             NSLog(@"位置不匹配，%@--- %@",NSStringFromCGPoint(mimagePoint),NSStringFromCGPoint(translatedPoint));
         }
     }
+    
 }
 
 @end
