@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, PieceType) {
     PieceTypeOutside, // 凹
 };
 typedef NS_ENUM(NSInteger, PieceSideType) {
-    PieceSideTypeLeft, //
+    PieceSideTypeLeft,
     PieceSideTypeBottom,
     PieceSideTypeRight,
     PieceSideTypeTop,
@@ -131,9 +131,9 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     self.pieceHCount = 3;
     self.pieceVCount = 3;
     // 切片尺寸
-    self.cubeHeightValue = self.originalCatImage.size.height/self.pieceHCount;
-    self.cubeWidthValue = self.originalCatImage.size.width/self.pieceVCount;
-    // 设置深度（凹凸）
+    self.cubeHeightValue = self.originalCatImage.size.height/self.pieceVCount;
+    self.cubeWidthValue = self.originalCatImage.size.width/self.pieceHCount;
+    // 设置深度（凹凸。支出去多少）
     self.deepnessH = -(self.cubeHeightValue / 4);
     self.deepnessV = -(self.cubeWidthValue / 4);
     
@@ -151,10 +151,10 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     
     NSUInteger mCounter = 0; // 调用次数计数器
     
-    PieceType mSideT = PieceTypeEmpty;
-    PieceType mSideR = PieceTypeEmpty;
-    PieceType mSideB = PieceTypeEmpty;
     PieceType mSideL = PieceTypeEmpty;
+    PieceType mSideB = PieceTypeEmpty;
+    PieceType mSideR = PieceTypeEmpty;
+    PieceType mSideT = PieceTypeEmpty;
     
     NSUInteger mCubeWidth = 0;
     NSUInteger mCubeHeight = 0;
@@ -166,27 +166,27 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
             
             // 1.1 中间 保证一凸一凹
             if(j != 0) {
-                mSideT = ([[[self.pieceTypeArray objectAtIndex:mCounter-1] objectForKey:@(PieceSideTypeBottom)] intValue] == PieceTypeOutside)?PieceTypeInside:PieceTypeOutside;
+                mSideL = ([[[self.pieceTypeArray objectAtIndex:mCounter-1] objectForKey:@(PieceSideTypeRight)] intValue] == PieceTypeOutside)?PieceTypeInside:PieceTypeOutside;
             }
             if(i != 0){
-                mSideL = ([[[self.pieceTypeArray objectAtIndex:mCounter-self.pieceHCount] objectForKey:@(PieceSideTypeRight)] intValue] == PieceTypeOutside)?PieceTypeInside:PieceTypeOutside;
+                mSideT = ([[[self.pieceTypeArray objectAtIndex:mCounter-self.pieceHCount] objectForKey:@(PieceSideTypeBottom)] intValue] == PieceTypeOutside)?PieceTypeInside:PieceTypeOutside;
             }
             // 随机凹凸
-            mSideR = ((arc4random() % 2) == 1)?PieceTypeOutside:PieceTypeInside;
             mSideB = ((arc4random() % 2) == 1)?PieceTypeOutside:PieceTypeInside;
+            mSideR = ((arc4random() % 2) == 1)?PieceTypeOutside:PieceTypeInside;
             
             // 1.2 边
             if(i == 0) {
-                mSideL = PieceTypeEmpty;
-            }
-            if(j == 0) {
                 mSideT = PieceTypeEmpty;
             }
+            if(j == 0) {
+                mSideL = PieceTypeEmpty;
+            }
             if(i == self.pieceVCount-1) {
-                mSideR = PieceTypeEmpty;
+                mSideB = PieceTypeEmpty;
             }
             if(j == self.pieceHCount - 1) {
-                mSideB = PieceTypeEmpty;
+                mSideR = PieceTypeEmpty;
             }
             
             // 2.设置高度以及宽度
@@ -194,26 +194,26 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
             mCubeWidth = self.cubeWidthValue;
             mCubeHeight = self.cubeHeightValue;
             // 2.2 根据凹凸 进行数据修正
-            if(mSideT == PieceTypeOutside) {
-                mCubeWidth -= self.deepnessV;
-            }
-            if(mSideB == PieceTypeOutside) {
+            if(mSideL == PieceTypeOutside) {
                 mCubeWidth -= self.deepnessV;
             }
             if(mSideR == PieceTypeOutside) {
+                mCubeWidth -= self.deepnessV;
+            }
+            if(mSideB == PieceTypeOutside) {
                 mCubeHeight -= self.deepnessH;
             }
-            if(mSideL == PieceTypeOutside) {
+            if(mSideT == PieceTypeOutside) {
                 mCubeHeight -= self.deepnessH;
             }
             
             // 3. 组装类型数组
             NSMutableDictionary *mOnePieceDic = [@{} mutableCopy];
 
-            [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideT] forKey:@(PieceSideTypeTop)];
             [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideL] forKey:@(PieceSideTypeLeft)];
-            [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideR] forKey:@(PieceSideTypeRight)];
+            [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideT] forKey:@(PieceSideTypeTop)];
             [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideB] forKey:@(PieceSideTypeBottom)];
+            [mOnePieceDic setObject:[NSNumber numberWithInteger:mSideR] forKey:@(PieceSideTypeRight)];
             
             [self.pieceTypeArray addObject:mOnePieceDic];
             
@@ -222,7 +222,7 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
             CGFloat mStartPointY = self.tipsImgaeView.top;
             [self.pieceCoordinateRectArray addObject:[NSArray arrayWithObjects:
                                                   [NSValue valueWithCGRect:CGRectMake(j*self.cubeWidthValue,  i*self.cubeHeightValue,mCubeWidth,mCubeHeight)],
-                                                  [NSValue valueWithCGRect:CGRectMake(mStartPointX +j*self.cubeWidthValue-(mSideT == PieceTypeOutside?-self.deepnessV:0),mStartPointY + i*self.cubeHeightValue-(mSideL == PieceTypeOutside?-self.deepnessH:0), mCubeWidth, mCubeHeight)], nil]];
+                                                  [NSValue valueWithCGRect:CGRectMake(mStartPointX +j*self.cubeWidthValue-(mSideL == PieceTypeOutside?-self.deepnessV:0),mStartPointY + i*self.cubeHeightValue-(mSideT == PieceTypeOutside?-self.deepnessH:0), mCubeWidth, mCubeHeight)], nil]];
             
             
             
@@ -248,8 +248,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
     // 2. 根据类型数据制作贝塞尔曲线
     for(int i = 0; i < [self.pieceTypeArray count]; i++) {
         // 2.1 根绝检测左边和下边是否凹决定起点
-        mXSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] == PieceTypeOutside)?-self.deepnessV:0;
-        mYSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?-self.deepnessH:0;
+        mXSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?-self.deepnessV:0;
+        mYSideStartPos = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] == PieceTypeOutside)?-self.deepnessH:0;
         
         
         mTotalHeight = mYSideStartPos + mCurveStartYPos*2 + mCurveHalfHLength * 2;
@@ -260,11 +260,11 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
         UIBezierPath* mPieceBezier = [UIBezierPath bezierPath];
         [mPieceBezier moveToPoint: CGPointMake(mXSideStartPos, mYSideStartPos)];
         
-        //2.2.2 绘制top
+        //2.2.2 绘制PieceSideTypeLeft
         [mPieceBezier addLineToPoint: CGPointMake(mXSideStartPos, mYSideStartPos + mCurveStartYPos)];
         
-        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] != PieceTypeEmpty) {
-            mCustomDeepness = self.deepnessV * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] intValue];
+        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] != PieceTypeEmpty) {
+            mCustomDeepness = self.deepnessV * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] intValue];
             
             [mPieceBezier addCurveToPoint: CGPointMake(mXSideStartPos + mCustomDeepness, mYSideStartPos + mCurveStartYPos+mCurveHalfHLength) controlPoint1: CGPointMake(mXSideStartPos, mYSideStartPos + mCurveStartYPos) controlPoint2: CGPointMake(mXSideStartPos + mCustomDeepness, mYSideStartPos + mCurveStartYPos + mCurveHalfHLength - mCurveStartYPos)];//25PieceTypeEmpty
             
@@ -273,10 +273,10 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
         
         [mPieceBezier addLineToPoint: CGPointMake(mXSideStartPos, mTotalHeight)];
   
-        //2.2.2 绘制right
+        //2.2.2 绘制PieceSideTypeBottom
         [mPieceBezier addLineToPoint: CGPointMake(mXSideStartPos+ mCurveStartXPos, mTotalHeight)];
-        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeRight)] integerValue] != PieceTypeEmpty) {
-            mCustomDeepness = self.deepnessH * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeRight)] intValue];
+        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] integerValue] != PieceTypeEmpty) {
+            mCustomDeepness = self.deepnessH * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] intValue];
             
             [mPieceBezier addCurveToPoint: CGPointMake(mXSideStartPos + mCurveStartXPos + mCurveHalfVLength, mTotalHeight - mCustomDeepness) controlPoint1: CGPointMake(mXSideStartPos + mCurveStartXPos, mTotalHeight) controlPoint2: CGPointMake(mXSideStartPos + mCurveHalfVLength, mTotalHeight - mCustomDeepness)];
             
@@ -286,10 +286,10 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
         [mPieceBezier addLineToPoint: CGPointMake(mTotalWidth, mTotalHeight)];
 
         
-        //2.2.3 绘制botto,
+        //2.2.3 绘制PieceSideTypeRight
         [mPieceBezier addLineToPoint: CGPointMake(mTotalWidth, mTotalHeight - mCurveStartYPos)];
-        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] integerValue] != PieceTypeEmpty) {
-            mCustomDeepness = self.deepnessV * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeBottom)] intValue];
+        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeRight)] integerValue] != PieceTypeEmpty) {
+            mCustomDeepness = self.deepnessV * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeRight)] intValue];
             
             [mPieceBezier addCurveToPoint: CGPointMake(mTotalWidth - mCustomDeepness, mYSideStartPos + mCurveStartYPos + mCurveHalfHLength) controlPoint1: CGPointMake(mTotalWidth, mYSideStartPos + mCurveStartYPos + mCurveHalfHLength * 2) controlPoint2: CGPointMake(mTotalWidth - mCustomDeepness, mTotalHeight - mCurveHalfHLength)];
             
@@ -299,13 +299,13 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
         [mPieceBezier addLineToPoint: CGPointMake(mTotalWidth, mYSideStartPos)];
         
         
-        //2.2.3 绘制left
+        //2.2.3 绘制PieceSideTypeTop
         [mPieceBezier addLineToPoint: CGPointMake(mTotalWidth - mCurveStartXPos, mYSideStartPos)];
-        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] != PieceTypeEmpty) {
-            mCustomDeepness = self.deepnessH * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] intValue];
-            
+        if([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] != PieceTypeEmpty) {
+            mCustomDeepness = self.deepnessH * [[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] intValue];
+
             [mPieceBezier addCurveToPoint: CGPointMake(mTotalWidth - mCurveStartXPos - mCurveHalfVLength, mYSideStartPos + mCustomDeepness) controlPoint1: CGPointMake(mTotalWidth - mCurveStartXPos, mYSideStartPos) controlPoint2: CGPointMake(mTotalWidth - mCurveHalfVLength, mYSideStartPos + mCustomDeepness)];
-            
+
             [mPieceBezier addCurveToPoint: CGPointMake(mXSideStartPos + mCurveStartXPos, mYSideStartPos) controlPoint1: CGPointMake(mXSideStartPos + mCurveHalfVLength, mYSideStartPos + mCustomDeepness) controlPoint2: CGPointMake(mXSideStartPos + mCurveStartXPos, mYSideStartPos)];
         }
         
@@ -335,8 +335,8 @@ typedef NS_ENUM(NSInteger, PieceSideType) {
         [mPeace setContentMode:UIViewContentModeTopLeft];
 
         // 修正
-        mXAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] == PieceTypeOutside)?self.deepnessV:0;
-        mYAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?self.deepnessH:0;
+        mXAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeLeft)] integerValue] == PieceTypeOutside)?self.deepnessV:0;
+        mYAddableVal = ([[[self.pieceTypeArray objectAtIndex:i] objectForKey:@(PieceSideTypeTop)] integerValue] == PieceTypeOutside)?self.deepnessH:0;
         mCropFrame.origin.x += mXAddableVal;
         mCropFrame.origin.y += mYAddableVal;
         
